@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" type="text/css"  th:href="@{/css/style.css}">
+
+</head>
+<body>
+  <nav id="header">
+    <div align="center">
+      <div class="banner">
+
+        <a href="/admin/">  <img th:src="@{/images/utility/banner.png}" alt=""> </a>
+      </div>
+      <div class="container text-center">
+        <div class="d-flex justify-content-center align-items-center">
+          <h5 class="mb-0">Welcome, <span th:text="${admin.fullName}">Admin</span>!</h5>
+          <form class="form-inline ms-3" action="/logout" method="post"> <button class="btn btn-outline-success" type="submit">Sign Out</button> </form>
+        </div>
+      </div>
+
+
+        <div id="header-icons">
+          <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/"> <img th:src="@{/images/utility/home_button.png}" alt="">
+              <br/>Home</a>
+          </div>
+          <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/all"> <img th:src="@{/images/utility/users.png}" alt="">
+              <br/>Users</a>
+          </div>
+            <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/category/all"><img th:src="@{/images/utility/category.png}" alt="">
+              <br/> Categories</a>
+            </div>
+              <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/book/all"><img th:src="@{/images/utility/bookstack.png}" alt="">
+              <br/>Books</a>
+              </div>
+                <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/customer/all"><img th:src="@{/images/utility/customer.png}" alt="">
+              <br/>Customers</a>
+                </div>
+                  <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/review/all"><img th:src="@{/images/utility/review.png}" alt="">
+              <br/>Review</a>
+                  </div>
+          <div style="display:table-cell; padding-top: 20px; padding-right:20px">
+            <a href="/admin/order/all"><img th:src="@{/images/utility/order.png}" alt="">
+              <br/> Orders</a>
+          </div>
+
+        </div>
+
+    </div>
+
+    <div align="center">
+      <br/>
+      <div>
+        <div>
+          <h1>Administrative Dashboard</h1>
+        </div>
+      </div>
+    </div>
+
+  </nav>
+
+<nav id="footer">
+  <div align="center">
+    <div></div>
+    <br/>
+    <hr width="80%" />
+    <h5>Bookstore Administration</h5>
+    <h5><i>(C) BookStoreOnline. All rights reserved</i></h5>
+  </div>
+
+</nav>
+
+</body>
+</html>

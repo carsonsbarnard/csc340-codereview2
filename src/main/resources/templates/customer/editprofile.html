@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/customer/index">
+        <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px;">
+    </a>
+</nav>
+
+<div class="container">
+    <h2 class="text-center mb-4">Edit Profile</h2>
+    <form th:action="@{/customer/editprofile}" method="post" th:object="${customer}">
+        <!-- First Name -->
+        <div class="form-group">
+            <label for="firstName" class="form-label">First Name:</label>
+            <input type="text" id="firstName" name="firstName" class="form-control" th:value="*{firstName}" required>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+            <label for="lastName" class="form-label">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" class="form-control" th:value="*{lastName}" required>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" th:value="*{email}" required readonly>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password" class="form-label">New Password:</label>
+            <input type="password" id="password" name="password" class="form-control">
+            <small class="text-muted">Leave blank if you don't want to change your password.</small>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+            <label for="phone" class="form-label">Phone:</label>
+            <input type="text" id="phone" name="phone" class="form-control" th:value="*{phone}">
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+            <label for="addressLine1" class="form-label">Address:</label>
+            <input type="text" id="addressLine1" name="addressLine1" class="form-control" th:value="*{addressLine1}">
+        </div>
+
+        <!-- Address Line 2 -->
+        <div class="form-group">
+            <label for="addressLine2" class="form-label">Address Line 2:</label>
+            <input type="text" id="addressLine2" name="addressLine2" class="form-control" th:value="*{addressLine2}">
+        </div>
+
+        <!-- City -->
+        <div class="form-group">
+            <label for="city" class="form-label">City:</label>
+            <input type="text" id="city" name="city" class="form-control" th:value="*{city}">
+        </div>
+
+        <!-- State -->
+        <div class="form-group">
+            <label for="state" class="form-label">State:</label>
+            <input type="text" id="state" name="state" class="form-control" th:value="*{state}">
+        </div>
+
+        <!-- Zipcode -->
+        <div class="form-group">
+            <label for="zipcode" class="form-label">Zipcode:</label>
+            <input type="text" id="zipcode" name="zipcode" class="form-control" th:value="*{zipcode}">
+        </div>
+
+        <!-- Country -->
+        <div class="form-group">
+            <label for="country" class="form-label">Country:</label>
+            <input type="text" id="country" name="country" class="form-control" th:value="*{country}">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+    </form>
+</div>
+
+<footer>
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
