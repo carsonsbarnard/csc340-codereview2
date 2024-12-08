@@ -8,10 +8,12 @@ import java.util.Objects;
 
 @Embeddable
 public class OrderDetailID {
-   @Column(name="bookOrderId")
+   @Column(name="book_order_id")
     private int bookOrderId;
     @Column(name="bookId")
     private int bookId;
+    @Column(name="customerId")
+    private int customerId;
 
     public OrderDetailID() {
     }
@@ -35,6 +37,10 @@ public class OrderDetailID {
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
+
+    public int getCustomerId(){ return customerId; }
+
+    public void setCustomerId(int customerId){ this.customerId = customerId; }
 
     @Override
     public boolean equals(Object obj){

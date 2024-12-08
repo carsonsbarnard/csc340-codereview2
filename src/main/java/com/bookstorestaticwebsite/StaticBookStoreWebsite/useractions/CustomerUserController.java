@@ -6,8 +6,7 @@ import com.bookstorestaticwebsite.StaticBookStoreWebsite.book.BookService;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.Customer;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.CustomerRepository;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.CustomerService;
-import com.bookstorestaticwebsite.StaticBookStoreWebsite.order.BookOrder;
-import com.bookstorestaticwebsite.StaticBookStoreWebsite.order.BookOrderRepository;
+import com.bookstorestaticwebsite.StaticBookStoreWebsite.order.*;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.review.Review;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.review.ReviewRepository;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.review.ReviewService;
@@ -25,6 +24,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/customer")
@@ -45,11 +45,13 @@ public class CustomerUserController {
     @Autowired
     private final BookRepository bookRepository;
 
-    public CustomerUserController(CustomerRepository customerRepository, BookRepository bookRepository, PasswordEncoder passwordEncoder, ReviewRepository reviewRepository) {
+    public CustomerUserController(CustomerRepository customerRepository, BookRepository bookRepository, PasswordEncoder passwordEncoder, OrderDetailRepository orderDetailRepository, ReviewRepository reviewRepository, OrderDetailService orderDetailService, OrderDetailService orderDetailService1) {
         this.customerRepository = customerRepository;
         this.bookRepository = bookRepository;
         this.passwordEncoder = passwordEncoder;
+        this.orderDetailRepository = orderDetailRepository;
         this.reviewRepository = reviewRepository;
+        this.orderDetailService = orderDetailService1;
     }
 
     @GetMapping("/index")
@@ -203,43 +205,67 @@ public class CustomerUserController {
         return "customer/all-books";                         // Render the all-books.html template
     }
 
-    @PostMapping("/order")
-    public String placeOrder(@RequestParam int bookId, Authentication authentication, Model model) {
-        // Get the logged-in customer's email
-        String email = authentication.getName();
-        Customer customer = customerRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+    private final OrderDetailRepository orderDetailRepository;
 
-        // Get the book details
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Book not found"));
+    @GetMapping("/customer/confirmOrder")
+    public String confirmOrder(Model model) {
+        // Fetch cart details from session or database
+        List<OrderDetail> cartItems = orderDetailRepository.findAll(); // Replace with appropriate query
+        double total = cartItems.stream()
+                .mapToDouble(item -> item.getSubtotal())
+                .sum();
+
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("total", total);
+        return "/customer/confirmOrder";
+    }
+
+    @PostMapping("/customer/confirmOrder")
+    public String placeOrder(Authentication authentication) {
+        // Fetch customer
+        String email = authentication.getName();
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        // Fetch cart items (replace with actual cart-fetching logic)
+        List<OrderDetail> cartItems = orderDetailRepository.findAll();
 
         // Create a new order
-        BookOrder order = new BookOrder();
-        order.setBook(book);
-        order.setCustomer(customer);
-        order.setFirstName(customer.getFirstName());
-        order.setLastName(customer.getLastName());
-        order.setAddressLine1(customer.getAddressLine1());
-        order.setAddressLine2(customer.getAddressLine2());
-        order.setCity(customer.getCity());
-        order.setState(customer.getState());
-        order.setZipcode(customer.getZipcode());
-        order.setCountry(customer.getCountry());
-        order.setPhone(customer.getPhone());
-        order.setSubtotal(book.getPrice());
-        order.setTax((book.getPrice() * 0.1)); // Assuming 10% tax
-        order.setShippingFee(5.00); // Assuming fixed shipping fee
-        order.setTotal((order.getSubtotal() + order.getTax() + order.getShippingFee()));
-        order.setOrderDate(LocalDateTime.now());
-        order.setPaymentMethod("Credit Card"); // Replace as needed
-        order.setStatus("Pending");
+        BookOrder bookOrder = new BookOrder();
+        bookOrder.setCustomer(customer);
+        bookOrder.setOrderDate((LocalDateTime.now()));
+        bookOrder.setStatus("Pending");
+        bookOrder.setTotal(cartItems.stream().mapToDouble(OrderDetail::getSubtotal).sum());
+        bookOrderRepository.save(bookOrder);
 
-        // Save the order
-        bookOrderRepository.save(order);
+        // Link cart items to the order
+        for (OrderDetail item : cartItems) {
+            item.setBookOrder(bookOrder);
+            orderDetailRepository.save(item);
+        }
 
-        // Redirect to a confirmation page
-        model.addAttribute("order", order);
-        return "customer/orderConfirmation";
+        // Clear the cart (if using a session-based cart)
+        orderDetailRepository.deleteAll(); // Or your cart clearing logic
+
+        return "redirect:/customer/vieworders";
     }
+
+    @GetMapping("/book/{id}")
+    public String getBookDetails(@PathVariable("id") int bookId, Model model) {
+        // Fetch the book details
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+
+        // Fetch reviews for this book
+        List<Review> reviews = reviewRepository.findByBook(book);
+
+        // Add book and reviews to the model
+        model.addAttribute("book", book);
+        model.addAttribute("reviews", reviews);
+
+        return "customer/book-details";
+    }
+
 
     @GetMapping("/vieworders")
     public String viewOrders(Model model, Authentication authentication) {
@@ -291,6 +317,187 @@ public class CustomerUserController {
         // Redirect to the orders page or a page showing reviews
         return "redirect:/customer/vieworders";  // Or a page showing reviews
     }
+
+    @GetMapping("/cart")
+    public String viewCart(Authentication authentication, Model model) {
+        // Fetch the customer details based on the authenticated user
+        String customerEmail = authentication.getName();
+        Customer customer = customerRepository.findByEmail(customerEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        // Fetch the order details for the cart, including book details
+        List<OrderDetail> orderDetails = orderDetailRepository.findByBookOrder_Customer(customer);
+
+        // Fetch additional details for the book order (e.g., order status, date, etc.)
+        List<BookOrder> bookOrder = bookOrderRepository.findByCustomerAndStatus(customer, "Pending");
+
+        if (bookOrder.isEmpty()){
+            throw new IllegalArgumentException("No active book order found for the customer");
+        }
+
+        // Add order details and order info to the model
+        model.addAttribute("orderDetails", orderDetails);
+        model.addAttribute("bookOrder", bookOrder);
+
+        return "customer/cart";  // Redirect to cart page to show the user's cart
+    }
+
+    @PostMapping("/cart/add")
+    public String addToCart(@RequestParam int bookId, @RequestParam int quantity, Authentication authentication) {
+        // Fetch the book by ID
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+
+        // Fetch the customer using authentication
+        String email = authentication.getName();
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        // Check for an existing BookOrder for this book and customer
+        Optional<BookOrder> existingOrder = bookOrderRepository.findByCustomerAndBookAndStatus(customer, book, "Pending");
+
+        BookOrder bookOrder;
+
+        if (existingOrder.isPresent()) {
+            // If an order already exists for this book, update it
+            bookOrder = existingOrder.get();
+
+            // Update the OrderDetail quantity and subtotal
+            Optional<OrderDetail> existingOrderDetail = orderDetailRepository.findByBookOrderAndBook(bookOrder, book);
+
+            if (existingOrderDetail.isPresent()) {
+                OrderDetail orderDetail = existingOrderDetail.get();
+                orderDetail.setQuantity(orderDetail.getQuantity() + quantity);
+                orderDetail.setSubtotal((float) (orderDetail.getQuantity() * book.getPrice()));
+                orderDetailRepository.save(orderDetail);
+            }
+        } else {
+            // If no existing order, create a new one
+            bookOrder = createNewBookOrder(customer, book, quantity);
+
+            // Create a new OrderDetail
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setBook(book);
+            orderDetail.setCustomer(customer);
+            orderDetail.setQuantity(quantity);
+            orderDetail.setSubtotal((float) (quantity * book.getPrice()));
+            orderDetail.setBookOrder(bookOrder);
+
+            orderDetailRepository.save(orderDetail);
+        }
+
+        return "redirect:/customer/cart"; // Redirect to the cart page
+    }
+
+    private BookOrder createNewBookOrder(Customer customer, Book book, int quantity) {
+        BookOrder bookOrder = new BookOrder();
+
+        // Set customer details
+        bookOrder.setCustomer(customer);
+        bookOrder.setFirstName(customer.getFirstName());
+        bookOrder.setLastName(customer.getLastName());
+        bookOrder.setAddressLine1(customer.getAddressLine1());
+        bookOrder.setAddressLine2(customer.getAddressLine2());
+        bookOrder.setCity(customer.getCity());
+        bookOrder.setState(customer.getState());
+        bookOrder.setZipcode(customer.getZipcode());
+        bookOrder.setCountry(customer.getCountry());
+        bookOrder.setPhone(customer.getPhone());
+
+        // Set book and order details
+        bookOrder.setBook(book);
+        bookOrder.setSubtotal(book.getPrice() * quantity);
+
+        // Tax and shipping fee
+        bookOrder.setTax(book.getPrice() * quantity * 0.1); // Assuming 10% tax
+        bookOrder.setShippingFee(5.00); // Fixed shipping fee
+        bookOrder.setTotal(bookOrder.getSubtotal() + bookOrder.getTax() + bookOrder.getShippingFee());
+
+        // Set additional details
+        bookOrder.setOrderDate(LocalDateTime.now());
+        bookOrder.setPaymentMethod("Credit Card"); // Default payment method
+        bookOrder.setStatus("Pending"); // Initial status
+
+        return bookOrderRepository.save(bookOrder);
+    }
+
+    private final OrderDetailService orderDetailService;
+
+    @PostMapping("/cart/update")
+    public String updateCartItem(
+            @RequestParam int bookId,
+            @RequestParam int customerId,
+            @RequestParam int bookOrderId,
+            @RequestParam int quantity) {
+
+        OrderDetailID orderDetailID = new OrderDetailID();
+        orderDetailID.setBookId(bookId);
+        orderDetailID.setCustomerId(customerId);
+        orderDetailID.setBookOrderId(bookOrderId);
+
+        orderDetailService.updateOrderDetailQuantity(orderDetailID, quantity);
+        return "redirect:/customer/cart";
+    }
+
+    @PostMapping("/cart/remove")
+    public String removeCartItem(
+            @RequestParam int bookId,
+            @RequestParam int customerId,
+            @RequestParam int bookOrderId
+    ) {
+        // Construct the composite key
+        OrderDetailID orderDetailID = new OrderDetailID();
+        orderDetailID.setBookId(bookId);
+        orderDetailID.setCustomerId(customerId);
+        orderDetailID.setBookOrderId(bookOrderId);
+
+        // Call the service to remove the item
+        orderDetailService.removeOrderDetail(orderDetailID);
+
+        // Redirect back to the cart page
+        return "redirect:/customer/cart";
+    }
+
+    @PostMapping("/cart/checkout")
+    public String checkout(Authentication authentication) {
+        // Fetch the customer based on authenticated user
+        String email = authentication.getName();
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        // Fetch all pending orders for this customer
+        List<BookOrder> pendingOrders = bookOrderRepository.findByCustomerAndStatus(customer, "Pending");
+
+        for (BookOrder bookOrder : pendingOrders) {
+            // Calculate total from OrderDetails
+            float total = 0f;
+            List<OrderDetail> orderDetails = orderDetailRepository.findByBookOrder(bookOrder);
+            for (OrderDetail orderDetail : orderDetails) {
+                total += orderDetail.getSubtotal();
+            }
+
+            // Update the BookOrder
+            bookOrder.setTotal((double) total);
+            bookOrder.setStatus("Processing");
+            bookOrderRepository.save(bookOrder);
+
+            // Clear the cart (OrderDetails)
+            orderDetailRepository.deleteAll(orderDetails);
+        }
+
+        return "redirect:/customer/cart/checkout-success";
+    }
+
+    @GetMapping("/cart/checkout-success")
+    public String checkoutSuccess(Model model, Authentication authentication) {
+        // Fetch the customer based on authenticated user
+        String email = authentication.getName();
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        return "customer/checkout-success"; // Name of the HTML file
+    }
+
 
 
 

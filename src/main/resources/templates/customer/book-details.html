@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${book.title}">Book Details</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<div class="container mt-5">
+  <h1 th:text="${book.title}">Book Title</h1>
+  <p th:text="${book.description}">Book Description</p>
+  <p><strong>Price:</strong> $<span th:text="${book.price}"></span></p>
+  <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+  <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+  <hr>
+
+  <!-- Reviews Section -->
+  <h3>Customer Reviews</h3>
+  <div th:if="${reviews.isEmpty()}">
+    <p>No reviews available for this book yet. Be the first to review!</p>
+  </div>
+  <div th:each="review : ${reviews}" class="mb-4">
+    <h5 th:text="${review.headline}"></h5>
+    <p><strong>Rating:</strong> <span th:text="${review.rating}"></span>/5</p>
+    <p th:text="${review.comment}"></p>
+    <p><small><strong>Reviewed on:</strong> <span th:text="${#dates.format(review.dateReview, 'yyyy-MM-dd')}"></span></small></p>
+  </div>
+
+  </div>
+</body>
+</html>
