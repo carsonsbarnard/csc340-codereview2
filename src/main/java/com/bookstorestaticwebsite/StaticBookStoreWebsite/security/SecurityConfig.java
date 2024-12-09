@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/customer/**").hasAuthority("CUSTOMER")
+                                .requestMatchers("/register").permitAll() // Allow everyone to access /register
                                 .anyRequest().authenticated()
                 )
 
