@@ -451,6 +451,12 @@ public class CustomerUserController {
         orderDetailID.setCustomerId(customerId);
         orderDetailID.setBookOrderId(bookOrderId);
 
+        // Check if the associated BookOrder has any remaining items
+        BookOrder bookOrder = bookOrderRepository.findById(bookOrderId)
+                .orElseThrow(() -> new IllegalArgumentException("BookOrder not found"));
+
+        bookOrderRepository.delete(bookOrder);
+
         // Call the service to remove the item
         orderDetailService.removeOrderDetail(orderDetailID);
 
