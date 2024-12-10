@@ -18,11 +18,20 @@
 </nav>
 
 <div class="container mt-5">
+  <img th:src="@{${book.imagePath}}" alt="Book Cover" class="book-img">
   <h1 th:text="${book.title}">Book Title</h1>
   <p th:text="${book.description}">Book Description</p>
   <p><strong>Price:</strong> $<span th:text="${book.price}"></span></p>
   <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
   <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+  <form th:action="@{/customer/cart/add}" method="post" class="add-to-cart-form mt-2">
+    <input type="hidden" name="bookId" th:value="${book.bookId}" />
+    <div class="form-group">
+      <label for="quantity">Quantity:</label>
+      <input type="number" name="quantity" min="1" value="1" class="form-control" style="width: 80px; display: inline-block;" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
+  </form>
   <hr>
 
   <!-- Reviews Section -->
