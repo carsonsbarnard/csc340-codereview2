@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +70,12 @@ public class CustomerUserController {
         // Retrieve the logged-in user's email
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loggedInEmail = authentication.getName(); // Retrieves the logged-in user's email
+        // Fetch the customer from the database based on their email
+        Customer customer = customerRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        String customerName = customer.getFirstName();
         model.addAttribute("email", loggedInEmail);
+        model.addAttribute("cusName", customerName);
 
         return "customer/index"; // Render the updated index page
     }
@@ -367,17 +373,19 @@ public class CustomerUserController {
         Customer customer = customerRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
 
-        // Fetch the order details for the cart, including book details
-        List<OrderDetail> orderDetails = orderDetailRepository.findByBookOrder_Customer(customer);
+        // Fetch the BookOrder with "Pending" status for the customer
+        List<BookOrder> pendingOrders = bookOrderRepository.findByCustomerAndStatus(customer, "Pending");
 
-        // Fetch additional details for the book order (e.g., order status, date, etc.)
-        List<BookOrder> bookOrder = bookOrderRepository.findByCustomerAndStatus(customer, "Pending");
+        // Fetch the OrderDetails associated with these pending BookOrders
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (BookOrder bookOrder : pendingOrders) {
+            List<OrderDetail> details = orderDetailRepository.findByBookOrder(bookOrder);
+            orderDetails.addAll(details);
+        }
 
-
-
-        // Add order details and order info to the model
+        // Add order details and pending order info to the model
         model.addAttribute("orderDetails", orderDetails);
-        model.addAttribute("bookOrder", bookOrder);
+        model.addAttribute("pendingOrders", pendingOrders);
 
         return "customer/cart";  // Redirect to cart page to show the user's cart
     }
@@ -446,12 +454,12 @@ public class CustomerUserController {
 
         // Set book and order details
         bookOrder.setBook(book);
-        bookOrder.setSubtotal(book.getPrice() * quantity);
+        bookOrder.setSubtotal(book.getPrice());
 
         // Tax and shipping fee
         bookOrder.setTax(book.getPrice() * quantity * 0.1); // Assuming 10% tax
         bookOrder.setShippingFee(5.00); // Fixed shipping fee
-        bookOrder.setTotal(bookOrder.getSubtotal() + bookOrder.getTax() + bookOrder.getShippingFee());
+        bookOrder.setTotal((bookOrder.getSubtotal() * quantity) + bookOrder.getTax() + bookOrder.getShippingFee());
 
         // Set additional details
         bookOrder.setOrderDate(LocalDateTime.now());
@@ -526,9 +534,6 @@ public class CustomerUserController {
             bookOrder.setTotal((double) total);
             bookOrder.setStatus("Processing");
             bookOrderRepository.save(bookOrder);
-
-            // Clear the cart (OrderDetails)
-            orderDetailRepository.deleteAll(orderDetails);
         }
 
         return "redirect:/customer/cart/checkout-success";
