@@ -3,6 +3,8 @@ package com.bookstorestaticwebsite.StaticBookStoreWebsite.useractions;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.book.Book;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.book.BookRepository;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.book.BookService;
+import com.bookstorestaticwebsite.StaticBookStoreWebsite.category.Category;
+import com.bookstorestaticwebsite.StaticBookStoreWebsite.category.CategoryRepository;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.Customer;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.CustomerRepository;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.customer.CustomerService;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -45,9 +48,10 @@ public class CustomerUserController {
     @Autowired
     private final BookRepository bookRepository;
 
-    public CustomerUserController(CustomerRepository customerRepository, BookRepository bookRepository, PasswordEncoder passwordEncoder, OrderDetailRepository orderDetailRepository, ReviewRepository reviewRepository, OrderDetailService orderDetailService, OrderDetailService orderDetailService1) {
+    public CustomerUserController(CustomerRepository customerRepository, BookRepository bookRepository, CategoryRepository categoryRepository, PasswordEncoder passwordEncoder, OrderDetailRepository orderDetailRepository, ReviewRepository reviewRepository, OrderDetailService orderDetailService, OrderDetailService orderDetailService1) {
         this.customerRepository = customerRepository;
         this.bookRepository = bookRepository;
+        this.categoryRepository = categoryRepository;
         this.passwordEncoder = passwordEncoder;
         this.orderDetailRepository = orderDetailRepository;
         this.reviewRepository = reviewRepository;
@@ -132,6 +136,24 @@ public class CustomerUserController {
         model.addAttribute("books", books);  // Add the search results to the model
         model.addAttribute("query", query);  // Add the search query to display it in the view
         return "customer/books";  // Return the view that displays the books (the books listing page)
+    }
+
+    private final CategoryRepository categoryRepository;
+    // This method handles category-specific page requests
+    @GetMapping("/category/{categoryId}")
+    public String getBooksByCategory(@PathVariable int categoryId, Model model) {
+        // Fetch the category name based on the categoryId
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+
+        // Retrieve all books for the selected category
+        List<Book> booksInCategory = bookRepository.findByCategory_CategoryId(categoryId);
+
+        // Add category and book data to the model
+        model.addAttribute("category", category);
+        model.addAttribute("books", booksInCategory);
+
+        return "customer/category"; // This will link to category.html
     }
 
     @GetMapping("/profile")
@@ -304,7 +326,8 @@ public class CustomerUserController {
                               @RequestParam String headline,
                               @RequestParam String comment,
                               @RequestParam int rating,
-                              Authentication authentication) {
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) { // Use RedirectAttributes
 
         // Fetch the logged-in user
         String email = authentication.getName();
@@ -327,8 +350,11 @@ public class CustomerUserController {
         // Save the review
         reviewRepository.save(review);
 
+        // Add flash attribute for success message
+        redirectAttributes.addFlashAttribute("reviewSuccess", "Your review has been successfully submitted!");
+
         // Redirect to the orders page or a page showing reviews
-        return "redirect:/customer/vieworders";  // Or a page showing reviews
+        return "redirect:/customer/vieworders";  // This will trigger a redirect with the flash attribute
     }
 
     @GetMapping("/cart")

@@ -31,4 +31,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
             "JOIN bookorders bo ON b.book_id = bo.book_id " +
             "GROUP BY b.book_id ORDER BY COUNT(bo.book_id) DESC", nativeQuery = true)
     List<Book> findMostPopularBooks();
+
+    List<Book> findByCategory_CategoryId(int categoryId);
+
 }
