@@ -63,6 +63,9 @@ public class CustomerUserController {
         // Fetch all books and add to the model
         model.addAttribute("books", bookRepository.findAll());
 
+        // Fetch all categories and add to the model
+        model.addAttribute("categories", categoryRepository.findAll());
+
         // Retrieve the logged-in user's email
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loggedInEmail = authentication.getName(); // Retrieves the logged-in user's email
@@ -370,9 +373,7 @@ public class CustomerUserController {
         // Fetch additional details for the book order (e.g., order status, date, etc.)
         List<BookOrder> bookOrder = bookOrderRepository.findByCustomerAndStatus(customer, "Pending");
 
-        if (bookOrder.isEmpty()){
-            throw new IllegalArgumentException("No active book order found for the customer");
-        }
+
 
         // Add order details and order info to the model
         model.addAttribute("orderDetails", orderDetails);

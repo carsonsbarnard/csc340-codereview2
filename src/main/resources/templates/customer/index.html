@@ -46,8 +46,9 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="ml-auto d-flex align-items-center">
-        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/profile">Profile<span class="sr-only">(current)</span></a>
-        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/vieworders">View Orders<span class="sr-only">(current)</span></a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/cart">View Cart</a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/profile">Profile</a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/vieworders">View Orders</a>
 
         <a href="/logout" th:if="${#authentication.principal != null}">Logout</a>
     </div>
@@ -75,37 +76,31 @@
 </div>
 
 <div class="container">
-    <h2 class="my-4">Browse Books by Category</h2>
-    <div class="row">
-        <!-- Create a button for each category -->
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/1">Science</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/2">Fiction</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/3">Non-Fiction</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/4">Mystery</a>
-        </div>
-    </div>
-    <div class="row my-2">
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/5">Fantasy</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/6">Self-Help</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/7">Thriller</a>
-        </div>
-        <div class="col-md-3">
-            <a class="btn btn-primary w-100" href="/customer/category/9">Romance</a>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="#" method="get">
+                <div class="form-group">
+                    <label for="categorySelect">Select a Category:</label>
+                    <select id="categorySelect" class="form-control" onchange="navigateToCategory(this)">
+                        <option value="" disabled selected>Categories...</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.categoryId}"
+                                th:text="${category.categoryName}">
+                        </option>
+                    </select>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+<script>
+    function navigateToCategory(select) {
+        const categoryId = select.value;
+        if (categoryId) {
+            window.location.href = `/customer/category/${categoryId}`;
+        }
+    }
+</script>
 
 <!-- Main Content -->
 <div class="container">
