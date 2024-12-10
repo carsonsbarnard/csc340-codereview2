@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Controller
 public class RegistrationController {
 
@@ -26,7 +30,6 @@ public class RegistrationController {
         return "register"; // Render the "register.html" template
     }
 
-    // Handle form submission
     @PostMapping("/register")
     public String registerCustomer(
             @RequestParam String email,
@@ -61,10 +64,14 @@ public class RegistrationController {
         customer.setCountry(country);
         customer.setZipcode(zipcode);
 
+        // Convert LocalDateTime to Date and set the registration date
+        customer.setRegisterDate(Date.valueOf(LocalDate.now()));
+
         // Save the customer to the database
         customerRepository.save(customer);
 
         // Redirect to the login page with a success message
         return "redirect:/login?registered=true";
     }
+
 }
