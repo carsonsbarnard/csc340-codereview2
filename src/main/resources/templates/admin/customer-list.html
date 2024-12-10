@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+          crossorigin="anonymous"></script>
+  <script src="/js/common.js"></script>
+  <style>
+    .password-column { width: 30px;}
+  </style>
+
+  <title>Customer List</title>
+
+  <link rel="stylesheet" type="text/css"  th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:insert="~{./fragments/navigation :: #header}"></nav>
+<div align="center">
+  <div class="container" style="margin-top: 15px;">
+    <h2 data-th-text="${title}"></h2>
+
+    <table class="table table-striped rounded-3 overflow-hidden">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Address Line 1</th>
+        <th>Address Line 2</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zipcode</th>
+        <th>Country</th>
+        <th>Phone</th>
+        <th>Register Date</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="c, fn: ${customersList}" >
+        <td><a th:text=" ${c.customerId}"> </a></td>
+        <td><a th:text=" ${fullNames[fn.index]}"> </a></td>
+        <td><a th:text=" ${c.email}"> </a></td>
+        <td><span class="password-column" th:text="${c.password}"></span></td>
+        <td><a th:text=" ${c.addressLine1}"> </a></td>
+        <td><a th:text=" ${c.addressLine2}"> </a></td>
+        <td><a th:text=" ${c.city}"> </a></td>
+        <td><a th:text=" ${c.state}"> </a></td>
+        <td><a th:text=" ${c.zipcode}"> </a></td>
+        <td><a th:text=" ${c.country}"> </a></td>
+        <td><a th:text=" ${c.phone}"> </a></td>
+        <td><a th:text=" ${c.registerDate}"> </a></td>
+        &nbsp;
+        <td> <a data-th-href="@{/admin/customer/edit/{cusId}(cusId=${c.customerId})}">Edit</a> &nbsp;
+
+          <a href="#" th:data-href="@{/admin/category/delete/{cusId} (cusId=${c.customerId})}"   onclick="return confirmDeletion(this)">Delete</a>
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div>
+      <button onclick="scrollToTop()" id="scrollTopButton">Go to Top</button>
+    </div>
+  </div>
+
+</div>
+<br>
+<nav th:insert="~{./fragments/navigation :: #footer}"></nav>
+
+</body>
+<script>
+  function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+</script>
+</html>

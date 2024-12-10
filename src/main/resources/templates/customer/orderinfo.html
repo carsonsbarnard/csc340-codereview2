@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Information</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .order-info {
+            margin-top: 30px;
+        }
+        .thank-you-message {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="thank-you-message">
+    <h1>Order Information and Tracking</h1>
+</div>
+
+<div class="order-info">
+    <h4>Order Date: <span>9/29/2024</span></h4>
+    <h4>USPS Tracking Number: <span>9400 1000 0000 0000 0000 00</span></h4>
+    <p>Use the tracking number above to check your order status on the USPS website.</p>
+</div>
+
+<div class="button-group mt-4">
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/'">Return to Shop</button>
+</div>
+
+<footer>
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

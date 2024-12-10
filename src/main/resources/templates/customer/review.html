@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review - Unbroken</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .star-rating {
+            color: gold;
+            font-size: 1.5em;
+        }
+        .review-input {
+            margin-bottom: 20px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">
+        <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="ml-auto d-flex align-items-center">
+        <a class="nav-link" href="/profile">Profile</a>
+        <a class="nav-link" href="/vieworder">View Order</a>
+        <a href="/login" class="btn btn-primary">Login</a>
+    </div>
+</nav>
+
+<!-- Review Section -->
+<div class="container">
+    <h2>Submit Your Review for UNBROKEN</h2>
+    <div>
+        <h4>Rating:</h4>
+        <div class="star-rating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" id="star-rating-value" value="0">
+    </div>
+
+    <textarea class="form-control review-input" placeholder="Write your review here..."></textarea>
+
+    <a href="/reviewsubmitted" class="btn btn-primary">Submit Review</a>
+</div>
+
+<footer>
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Star rating functionality
+    $(document).ready(function() {
+        $('.star').hover(function() {
+            $(this).prevAll().addBack().css('color', 'gold');
+            $(this).nextAll().css('color', '#ddd');
+        }, function() {
+            $('.star').css('color', '#ddd');
+            const ratingValue = $('#star-rating-value').val();
+            $('.star').slice(0, ratingValue).css('color', 'gold');
+        });
+
+        $('.star').click(function() {
+            const ratingValue = $(this).data('value');
+            $('#star-rating-value').val(ratingValue);
+            $('.star').css('color', '#ddd');
+            $('.star').slice(0, ratingValue).css('color', 'gold');
+        });
+    });
+</script>
+</body>
+</html>

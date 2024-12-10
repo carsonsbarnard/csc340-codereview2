@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="ml-auto d-flex align-items-center">
+    <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/profile">Profile<span class="sr-only">(current)</span></a>
+    <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/vieworder">View Order<span class="sr-only">(current)</span></a>
+
+    <a href="/logout" th:if="${#authentication.principal != null}">Logout</a>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h2 class="text-center">Order Confirmation</h2>
+  <p>Thank you for your order, <span th:text="${order.firstName} + ' ' + ${order.lastName}"></span>!</p>
+  <p>Your order details:</p>
+  <ul>
+    <li><strong>Book:</strong> <span th:text="${order.book.title}"></span></li>
+    <li><strong>Total Price:</strong> $<span th:text="${order.total}"></span></li>
+    <li><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></li>
+    <li><strong>Status:</strong> <span th:text="${order.status}"></span></li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    footer {
+      background-color: #343a40;
+      color: white;
+      padding: 10px 0;
+      margin-top: 20px;
+    }
+    .profile-card {
+      margin: auto;
+      max-width: 600px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .navbar img {
+      width: 200px;
+      height: auto;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<!-- User Profile Section -->
+<div class="container mt-5">
+  <h2 class="text-center mb-4">User Profile</h2>
+
+  <!-- Profile Card -->
+  <div th:if="${customer != null}" class="profile-card">
+    <div class="card-header bg-primary text-white text-center">
+      <h4>Profile of <span th:text="${customer.firstName} + ' ' + ${customer.lastName}"></span></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>Customer ID:</strong> <span th:text="${customer.customerId}"></span></p>
+      <p><strong>First Name:</strong> <span th:text="${customer.firstName}"></span></p>
+      <p><strong>Last Name:</strong> <span th:text="${customer.lastName}"></span></p>
+      <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+      <p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
+      <p><strong>Address:</strong>
+        <span th:text="${customer.addressLine1}"></span>
+        <span th:if="${customer.addressLine2 != null}" th:text="' (' + ${customer.addressLine2} + ')'"></span><br>
+        <span th:text="${customer.city} + ', ' + ${customer.state} + ' ' + ${customer.zipcode}"></span><br>
+        <span th:text="${customer.country}"></span>
+      </p>
+      <p><strong>Registration Date:</strong> <span th:text="${customer.registerDate}"></span></p>
+    </div>
+  </div>
+
+  <!-- No Customer Found Message -->
+  <div th:if="${customer == null}" class="alert alert-warning text-center">
+    <p>User not found!</p>
+  </div>
+
+  <!-- Edit Profile Button -->
+  <div class="text-center mt-4">
+    <a th:href="@{/customer/editprofile}" class="btn btn-warning btn-lg">Edit Profile</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="text-center">
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

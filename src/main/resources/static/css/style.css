@@ -1,0 +1,99 @@
+.table-striped>tbody>tr:nth-child(odd)>th {
+    background-color: #A1DD70;
+}
+
+
+.table-striped>tbody>tr:nth-child(odd)>td {
+    background-color: #A1DD7080;
+}
+
+.table-striped>tbody>tr:nth-child(even)>td {
+    background-color: #A1DD7040;
+}
+
+
+.btn-primary {
+    color: #ffffff;
+    background-color: #A1DD70;
+    border-color: #00000000
+}
+
+.btn-primary:hover {
+    color: #FFFFFF;
+    background-color: #799351;
+    border-color: #00000000
+}
+
+
+body{
+    background-color:#eff2e4;
+}
+
+#header-icons{
+    display:table;
+}
+.custom-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    background-color: #A1DD7080;
+}
+
+.custom-form input[type="text"],
+.custom-form input[type="email"],
+.custom-form input[type="password"],
+.custom-form input[type="date"],
+.custom-form textarea
+ {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.custom-form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.custom-form input[type="submit"]:hover {
+    background-color: #45a049;
+}
+.custom-form select {
+width: 100%;
+padding: 10px;
+margin: 5px 0 10px 0;
+border: 1px solid #ccc;
+ border-radius: 5px;
+ background-color: #f9f9f9;
+ font-family: 'Arial', sans-serif; font-size: 16px;
+ appearance: none; /* Removes default styling for better customization */ }
+ .custom-form select:focus {
+ border-color: #4CAF50;
+ box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.banner {
+    width: 100%;
+    height: 50vh;
+    overflow: hidden;
+    padding-bottom: 20px;
+    }
+.banner img {
+     width: 100%;
+     height: 100%;
+     object-fit: fill;
+      display: block;
+}
+a {
+text-decoration: none;
+}

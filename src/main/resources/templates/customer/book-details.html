@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${book.title}">Book Details</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+        background-color: #f8f9fa;
+    }
+    footer {
+        background-color: #343a40;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+    }
+    .category-title {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .img-size {
+        width: 200px;
+        height: auto;
+    }
+    .gradient-jumbotron {
+        background: linear-gradient(to right, crimson, #a9a9a9); /* Customize your gradient colors here */
+        color: white; /* Optional: change text color for better visibility */
+    }
+    .custom-nav-link {
+        color: #333; /* Change to your desired color */
+    }
+    .custom-nav-link:hover {
+        color: #555; /* Change on hover */
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<div class="container mt-5">
+  <img th:src="@{${book.imagePath}}" alt="Book Cover" class="book-img">
+  <h1 th:text="${book.title}">Book Title</h1>
+  <p th:text="${book.description}">Book Description</p>
+  <p><strong>Price:</strong> $<span th:text="${book.price}"></span></p>
+  <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+  <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+  <form th:action="@{/customer/cart/add}" method="post" class="add-to-cart-form mt-2">
+    <input type="hidden" name="bookId" th:value="${book.bookId}" />
+    <div class="form-group">
+      <label for="quantity">Quantity:</label>
+      <input type="number" name="quantity" min="1" value="1" class="form-control" style="width: 80px; display: inline-block;" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
+  </form>
+  <hr>
+
+  <!-- Reviews Section -->
+  <h3>Customer Reviews</h3>
+  <div th:if="${reviews.isEmpty()}">
+    <p>No reviews available for this book yet. Be the first to review!</p>
+  </div>
+  <div th:each="review : ${reviews}" class="mb-4">
+    <h5 th:text="${review.headline}"></h5>
+    <p><strong>Rating:</strong> <span th:text="${review.rating}"></span>/5</p>
+    <p th:text="${review.comment}"></p>
+    <p><small><strong>Reviewed on:</strong> <span th:text="${#dates.format(review.dateReview, 'yyyy-MM-dd')}"></span></small></p>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+  </footer>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/customer/index">Main Page</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/customer/about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/customer/contact">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  </div>
+</body>
+</html>
