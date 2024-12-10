@@ -56,17 +56,30 @@ public class CustomerUserController {
 
     @GetMapping("/index")
     public String index(Model model) {
-        Book book6 = bookService.getBookById(6);
-        Book book7 = bookService.getBookById(7);
-        model.addAttribute("book6", book6);
-        model.addAttribute("book7", book7);
+        // Fetch all books and add to the model
+        model.addAttribute("books", bookRepository.findAll());
+
+        // Retrieve the logged-in user's email
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loggedInEmail = authentication.getName(); // Retrieves the logged-in user's email
-
-        // Add the email or other details to the model
         model.addAttribute("email", loggedInEmail);
 
-        return "customer/index";
+        return "customer/index"; // Render the updated index page
+    }
+
+    @GetMapping("/mostpopular")
+    public String mostPopularBooks(Model model) {
+        List<Book> mostPopularBooks = bookRepository.findMostPopularBooks();
+        model.addAttribute("books", mostPopularBooks);
+        return "customer/mostpopular";
+    }
+
+
+    @GetMapping("/newest")
+    public String getNewestBooks(Model model) {
+        List<Book> books = bookRepository.findAllByOrderByBookIdDesc(); // Fetch books sorted by ID descending
+        model.addAttribute("books", books);
+        return "customer/newest"; // Return the Thymeleaf template name
     }
 
     @GetMapping("/register")

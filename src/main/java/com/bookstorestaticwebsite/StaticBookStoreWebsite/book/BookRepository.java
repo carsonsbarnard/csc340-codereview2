@@ -23,4 +23,12 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     // Custom query method to search books by title
     List<Book> findByTitleContainingIgnoreCase(String title);
+
+    List<Book> findAllByOrderByBookIdDesc();  // Correct method to fetch books sorted by bookId in descending order.
+
+    // Query to get the most popular books by counting the occurrences of book_id in bookorders
+    @Query(value = "SELECT b.* FROM book b " +
+            "JOIN bookorders bo ON b.book_id = bo.book_id " +
+            "GROUP BY b.book_id ORDER BY COUNT(bo.book_id) DESC", nativeQuery = true)
+    List<Book> findMostPopularBooks();
 }

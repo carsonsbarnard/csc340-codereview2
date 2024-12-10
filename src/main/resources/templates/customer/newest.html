@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newest Books</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .category-title {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .img-size {
+        width: 200px;
+        height: auto;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<!-- Header -->
+<header class="jumbotron text-center">
+  <h1 class="display-4">Newest Books</h1>
+  <p class="lead">Explore our latest additions based on their arrival!</p>
+</header>
+
+<div class="container">
+  <h3>Newest Books</h3>
+  <div class="row">
+    <div class="col-md-4 mb-4" th:each="book : ${books}">
+      <div class="card h-100">
+        <img th:src="@{${book.imagePath}}" class="card-img-top img-size" alt="Book Image">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${book.title}"></h5>
+          <p class="card-text" th:text="${book.description}"></p>
+          <a th:href="@{/customer/book/{id}(id=${book.bookId})}" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center mt-4">
+  <p>&copy; 2024 Bookstore. All rights reserved.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
