@@ -9,12 +9,12 @@ import java.util.List;
 import com.bookstorestaticwebsite.StaticBookStoreWebsite.order.OrderDetail;
 
 @Entity
-@Table(name = "book_orders")
+@Table(name = "bookorders")
 public class BookOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_order_id")
+    @Column(name = "book_order_id", nullable = false)
     private int bookOrderId;
 
     @Column(name = "address_line1", nullable = false)

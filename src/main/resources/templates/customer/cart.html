@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Shopping Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: #444;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 30px;
+      color: #777;
+    }
+
+    form {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .update-form {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .remove-button {
+      background-color: #d9534f;
+      margin-left: 10px;
+    }
+
+    .remove-button:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/customer/index">
+    <img src="/images/bookstorebanner.png" alt="Bookstore Homepage" style="width: 200px; height: auto; vertical-align: middle; margin-right: 5px;">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+
+<h1>Your Cart</h1>
+
+<div th:if="${orderDetails.isEmpty()}">
+  <p>Your cart is empty!</p>
+</div>
+
+<div th:unless="${orderDetails.isEmpty()}">
+  <table>
+    <thead>
+    <tr>
+      <th>Book Title</th>
+      <th>Author</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Subtotal</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="orderDetail : ${orderDetails}">
+      <td th:text="${orderDetail.book.title}"></td>
+      <td th:text="${orderDetail.book.author}"></td>
+      <td th:text="${orderDetail.book.price}"></td>
+      <td>
+        <form th:action="@{/customer/cart/update}" method="post" class="update-form">
+          <input type="hidden" name="bookId" th:value="${orderDetail.orderDetailID.bookId}">
+          <input type="hidden" name="customerId" th:value="${orderDetail.orderDetailID.customerId}">
+          <input type="hidden" name="bookOrderId" th:value="${orderDetail.orderDetailID.bookOrderId}">
+          <input type="number" name="quantity" th:value="${orderDetail.quantity}" min="1">
+          <button type="submit">Update</button>
+        </form>
+      </td>
+      <td th:text="${orderDetail.subtotal}"></td>
+      <td>
+        <form th:action="@{/customer/cart/remove}" method="post">
+          <input type="hidden" name="bookId" th:value="${orderDetail.orderDetailID.bookId}">
+          <input type="hidden" name="customerId" th:value="${orderDetail.orderDetailID.customerId}">
+          <input type="hidden" name="bookOrderId" th:value="${orderDetail.orderDetailID.bookOrderId}">
+          <button type="submit" class="remove-button">Remove</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    <p>&copy; 2024 Bookstore. All rights reserved.</p>
+  </footer>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/customer/index">Main Page</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/customer/about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/customer/contact">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <form th:action="@{/customer/cart/checkout}" method="post">
+    <button type="submit">Proceed to Checkout</button>
+  </form>
+</div>
+</body>
+</html>

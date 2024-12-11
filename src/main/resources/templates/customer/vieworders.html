@@ -30,6 +30,9 @@
         font-size: 1.1rem;
         margin-top: 10px;
     }
+    .alert {
+        margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -42,6 +45,12 @@
 
 <div class="order-container">
   <h2 class="text-center mb-4">Your Orders</h2>
+
+  <!-- Display success message if review was successfully submitted -->
+  <div th:if="${reviewSuccess}" class="alert alert-success" role="alert">
+    <span th:text="${reviewSuccess}"></span>
+  </div>
+
   <div th:if="${orders != null && !orders.isEmpty()}">
     <div th:each="order : ${orders}" class="order-item">
       <div class="order-title" th:text="'Order ID: ' + ${order.bookOrderId}">Order ID</div>

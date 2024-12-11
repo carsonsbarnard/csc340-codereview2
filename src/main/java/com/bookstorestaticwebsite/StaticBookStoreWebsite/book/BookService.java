@@ -6,6 +6,9 @@ import com.bookstorestaticwebsite.StaticBookStoreWebsite.review.ReviewRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -60,6 +63,9 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    public List<Book> findAllBooksSortedByIdDesc() {
+        return bookRepository.findAll(Sort.by(Sort.Direction.DESC, "book_id"));
+    }
 
     public boolean checkTitleExist(Book book){
         boolean existed = false;

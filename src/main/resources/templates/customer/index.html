@@ -46,8 +46,9 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="ml-auto d-flex align-items-center">
-        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/profile">Profile<span class="sr-only">(current)</span></a>
-        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/vieworders">View Orders<span class="sr-only">(current)</span></a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/cart">View Cart</a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/profile">Profile</a>
+        <a class="nav-link custom-nav-link custom-nav-link:hover" href="/customer/vieworders">View Orders</a>
 
         <a href="/logout" th:if="${#authentication.principal != null}">Logout</a>
     </div>
@@ -56,7 +57,8 @@
 <!-- Header -->
 <header class="jumbotron text-center gradient-jumbotron">
     <h1 class="display-4">BookstoreOnline</h1>
-    <p class="lead">Welcome to BookstoreOnline, <span th:text="${email}"></span>! Enjoy our vast selection of titles!</p>
+    <p class="lead">Welcome to BookstoreOnline, <span th:text="${cusName}"></span>! Enjoy our vast selection of titles!</p>
+    <p><span th:text="${email}"></span></p>
 </header>
 
 <!-- Search Bar -->
@@ -67,41 +69,58 @@
     </form>
 </div>
 
+<!-- Buttons for Most Popular and Newest Pages -->
+<div class="container text-center my-4">
+    <a href="/customer/mostpopular" class="btn btn-success mx-2">Most Popular Books</a>
+    <a href="/customer/newest" class="btn btn-info mx-2">Newest Books</a>
+    <a href="/customer/books" class="btn btn-info mx-2">All Books</a>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="#" method="get">
+                <div class="form-group">
+                    <label for="categorySelect">Select a Category:</label>
+                    <select id="categorySelect" class="form-control" onchange="navigateToCategory(this)">
+                        <option value="" disabled selected>Categories...</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.categoryId}"
+                                th:text="${category.categoryName}">
+                        </option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function navigateToCategory(select) {
+        const categoryId = select.value;
+        if (categoryId) {
+            window.location.href = `/customer/category/${categoryId}`;
+        }
+    }
+</script>
 
 <!-- Main Content -->
 <div class="container">
-    <!-- Link to the Books Page -->
     <div class="text-center category-title mt-5">
         <h3>Explore All Books</h3>
-        <p>Browse our best sellers!</p>
+        <p>Browse our entire collection!</p>
 
-        <!-- Best Sellers Row -->
         <div class="row">
-            <!-- Display Book 6 -->
-            <div class="col-md-6 text-center">
-                <div class="card">
-                    <img src="/images/books/C_proramming_language.jpg" class="card-img-top" alt="Book Image">
+            <div class="col-md-4 mb-4" th:each="book : ${books}">
+                <div class="card h-100">
+                    <img th:src="@{${book.imagePath}}" class="card-img-top img-size" alt="Book Image">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${book6.title}"></h5>
-                        <p class="card-text" th:text="${book6.description}"></p>
-                        <a th:href="@{/book/{id}(id=${book6.bookId})}" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Display Book 7 -->
-            <div class="col-md-6 text-center">
-                <div class="card">
-                    <img src="/images/books/day_dreamer.jpg" class="card-img-top" alt="Book Image">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${book7.title}"></h5>
-                        <p class="card-text" th:text="${book7.description}"></p>
-                        <a th:href="@{/book/{id}(id=${book7.bookId})}" class="btn btn-primary">View Details</a>
+                        <h5 class="card-title" th:text="${book.title}"></h5>
+                        <p class="card-text" th:text="${book.description}"></p>
+                        <a th:href="@{/customer/book/{id}(id=${book.bookId})}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>
         </div>
-        <a href="/customer/books" class="btn btn-primary">View All Books</a>
     </div>
 </div>
 
